@@ -1,17 +1,186 @@
 ---
+import { client } from '../lib/sanity.js'
 
+const turer = await client.fetch(`*[_type == "tur"] | order(datum desc) {
+  _id,
+  toppnamn,
+  datum,
+  hojd,
+  stigtid,
+  snodjup,
+  vindstyrka,
+  vindriktning,
+  temperatur,
+  beskrivning
+}`)
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Splitboardcupen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --off-white: #fdfbf4;
+      --near-black: #161616;
+      --lime: #eafe53;
+    }
+
+    body {
+      background: var(--off-white);
+      color: var(--near-black);
+      font-family: 'Albert Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      border-bottom: 1px solid var(--near-black);
+      padding: clamp(1rem, 4vw, 2rem);
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    header span {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      opacity: 0.5;
+    }
+
+    main {
+      padding: clamp(16px, 4vw, 48px);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Grid: namn (flex) + datum (fast) + höjd (fast) + stigtid/snödjup (döljs mobil) */
+    .grid-header,
+    .tur-rad {
+      display: grid;
+      grid-template-columns: 1fr 110px 80px 90px 90px;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    @media (max-width: 600px) {
+      .grid-header,
+      .tur-rad {
+        grid-template-columns: 1fr 100px 70px;
+      }
+
+      .col-stigtid,
+      .col-snodjup {
+        display: none;
+      }
+    }
+
+    .grid-header {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--near-black);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.5;
+    }
+
+    .tur-rad {
+      padding: 1.25rem 0;
+      border-bottom: 1px solid rgba(22,22,22,0.12);
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.15s;
+    }
+
+    .tur-rad:hover {
+      background: var(--lime);
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+      margin-left: -0.75rem;
+      margin-right: -0.75rem;
+    }
+
+    .tur-namn {
+      font-size: 1.05rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tur-meta {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.78rem;
+    }
+
+    .empty {
+      padding: 4rem 0;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.85rem;
+      opacity: 0.4;
+    }
+
+    .season-tag {
+      display: inline-block;
+      background: var(--lime);
+      color: var(--near-black);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.5rem;
+      margin-bottom: 2rem;
+      margin-top: 1.5rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Splitboardcupen</h1>
+    <span>Säsongslogg</span>
+  </header>
+
+  <main>
+    <div class="season-tag">Säsong 2024/25</div>
+
+    {turer.length === 0 ? (
+      <p class="empty">Inga turer registrerade ännu.</p>
+    ) : (
+      <>
+        <div class="grid-header">
+          <span>Topp</span>
+          <span>Datum</span>
+          <span>Höjd</span>
+          <span class="col-stigtid">Stigtid</span>
+          <span class="col-snodjup">Snödjup</span>
+        </div>
+        {turer.map((tur) => (
+          <a href={`/tur/${tur._id}`} class="tur-rad">
+            <span class="tur-namn">{tur.toppnamn}</span>
+            <span class="tur-meta">{new Date(tur.datum).toLocaleDateString('sv-SE')}</span>
+            <span class="tur-meta">{tur.hojd} m</span>
+            <span class="tur-meta col-stigtid">{tur.stigtid} min</span>
+            <span class="tur-meta col-snodjup">{tur.snodjup} cm</span>
+          </a>
+        ))}
+      </>
+    )}
+  </main>
+</body>
 </html>
