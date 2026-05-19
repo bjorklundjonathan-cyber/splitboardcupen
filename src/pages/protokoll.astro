@@ -9,7 +9,7 @@
   <title>Protokoll – Splitboardcupen</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&family=Pinyon+Script&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -93,6 +93,22 @@
     .protokoll-text p:last-child {
       margin-bottom: 0;
     }
+
+    .signatur-avdelare {
+      border: none;
+      border-top: 1px solid rgba(22,22,22,0.15);
+      margin-top: 3rem;
+      max-width: 60ch;
+    }
+
+    .signatur {
+      font-family: 'Pinyon Script', cursive;
+      font-size: 2.8rem;
+      color: var(--near-black);
+      opacity: 0.35;
+      margin-top: 1.25rem;
+      line-height: 1;
+    }
   </style>
 </head>
 <body>
@@ -118,6 +134,9 @@
       <p>Inga rekord har ifrågasatts. Inga rekord förväntas ifrågasättas.</p>
       <p>Arkivet växer.</p>
     </div>
+
+    <hr class="signatur-avdelare" />
+    <div class="signatur">Jørn Æ.</div>
   </main>
 </body>
 </html>
