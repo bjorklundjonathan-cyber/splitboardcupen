@@ -55,11 +55,22 @@ const turer = await client.fetch(`*[_type == "tur"] | order(datum desc) {
       letter-spacing: -0.02em;
     }
 
-    header span {
+    header nav {
+      display: flex;
+      gap: 1rem;
+      align-items: baseline;
+    }
+
+    header nav a {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.75rem;
+      text-decoration: none;
+      color: inherit;
       opacity: 0.5;
     }
+
+    header nav a:hover { opacity: 1; }
+    header nav a.active { opacity: 1; }
 
     main {
       padding: clamp(16px, 4vw, 48px);
@@ -153,7 +164,10 @@ const turer = await client.fetch(`*[_type == "tur"] | order(datum desc) {
 <body>
   <header>
     <h1>Splitboardcupen</h1>
-    <span>Säsongslogg</span>
+    <nav>
+      <a href="/" class="active">Säsongslogg</a>
+      <a href="/protokoll">Protokoll</a>
+    </nav>
   </header>
 
   <main>

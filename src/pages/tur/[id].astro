@@ -55,7 +55,7 @@ if (!tur) return Astro.redirect('/')
       gap: 1rem;
     }
 
-    header a {
+    header a.site-title {
       font-size: 1.25rem;
       font-weight: 700;
       letter-spacing: -0.02em;
@@ -63,13 +63,23 @@ if (!tur) return Astro.redirect('/')
       color: inherit;
     }
 
-    header a:hover { text-decoration: underline; }
+    header a.site-title:hover { text-decoration: underline; }
 
-    header span {
+    header nav {
+      display: flex;
+      gap: 1rem;
+      align-items: baseline;
+    }
+
+    header nav a {
       font-family: 'IBM Plex Mono', monospace;
       font-size: 0.75rem;
+      text-decoration: none;
+      color: inherit;
       opacity: 0.5;
     }
+
+    header nav a:hover { opacity: 1; }
 
     main {
       max-width: 900px;
@@ -183,8 +193,11 @@ if (!tur) return Astro.redirect('/')
 </head>
 <body>
   <header>
-    <a href="/">Splitboardcupen</a>
-    <span>Säsongslogg</span>
+    <a href="/" class="site-title">Splitboardcupen</a>
+    <nav>
+      <a href="/">Säsongslogg</a>
+      <a href="/protokoll">Protokoll</a>
+    </nav>
   </header>
 
   <main>

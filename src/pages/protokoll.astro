@@ -1,0 +1,118 @@
+---
+---
+
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Protokoll – Splitboardcupen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --off-white: #fdfbf4;
+      --near-black: #161616;
+      --lime: #eafe53;
+    }
+
+    body {
+      background: var(--off-white);
+      color: var(--near-black);
+      font-family: 'Albert Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      border-bottom: 1px solid var(--near-black);
+      padding: clamp(1rem, 4vw, 2rem);
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+    }
+
+    header a.site-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    header a.site-title:hover { text-decoration: underline; }
+
+    header nav {
+      display: flex;
+      gap: 1rem;
+      align-items: baseline;
+    }
+
+    header nav a {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      text-decoration: none;
+      color: inherit;
+      opacity: 0.5;
+    }
+
+    header nav a:hover { opacity: 1; }
+    header nav a.active { opacity: 1; }
+
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: clamp(16px, 4vw, 48px);
+    }
+
+    h1 {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 3rem;
+      margin-top: 0.5rem;
+    }
+
+    .protokoll-text p {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      max-width: 60ch;
+      margin-bottom: 1.5rem;
+      opacity: 0.85;
+    }
+
+    .protokoll-text p:last-child {
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="site-title">Splitboardcupen</a>
+    <nav>
+      <a href="/">Säsongslogg</a>
+      <a href="/protokoll" class="active">Protokoll</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Protokoll</h1>
+
+    <div class="protokoll-text">
+      <p>Cupen har genomförts varje vinter. Exakt hur länge är oklart.</p>
+      <p>Dokumentationen påbörjades när någon bestämde sig för att kustlandets topografi förtjänade ett register. Vem det var framgår inte av de tidiga rapporterna. De tidiga rapporterna är ofullständiga.</p>
+      <p>Området är plant. Det har aldrig varit ett hinder.</p>
+      <p>Kustlandet rymmer höjdpunkter som ännu saknar namn i officiella kartregister. Splitboardcupen namnger dem. Klassificeringssystemet utvecklades i fält under förhållanden som inte alltid var optimala. Det är inte fullständigt. Det revideras löpande när terrängen kräver det.</p>
+      <p>Varje bestigning är nödvändig. Inte alla kan förklaras. Rapporterna finns för dem som kommer efter.</p>
+      <p>Utrustningen är enkel. Metodiken är inte det.</p>
+      <p>Vädret dokumenteras utan värdering. Snödjup, vindstyrka, temperatur – data som talar för sig själv. Vad som krävdes för att nå toppen under givna förhållanden lämnas åt läsaren att bedöma.</p>
+      <p>Inga rekord har ifrågasatts. Inga rekord förväntas ifrågasättas.</p>
+      <p>Arkivet växer.</p>
+    </div>
+  </main>
+</body>
+</html>
