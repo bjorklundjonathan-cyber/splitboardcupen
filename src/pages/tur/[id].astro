@@ -15,10 +15,15 @@ const tur = await client.fetch(`*[_type == "tur" && _id == $id][0] {
   vindriktning,
   temperatur,
   beskrivning,
+  lat,
+  lng,
   "foton": foton[].asset->url
 }`, { id })
 
 if (!tur) return Astro.redirect('/')
+
+const mapboxToken = import.meta.env.PUBLIC_MAPBOX_TOKEN
+const hasMap = tur.lat && tur.lng
 ---
 
 <!DOCTYPE html>
@@ -30,6 +35,7 @@ if (!tur) return Astro.redirect('/')
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  {hasMap && <link href="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.css" rel="stylesheet" />}
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -165,6 +171,23 @@ if (!tur) return Astro.redirect('/')
       opacity: 0.85;
     }
 
+    #map {
+      width: 100%;
+      height: 380px;
+      border: 1px solid var(--near-black);
+      margin-bottom: 3rem;
+    }
+
+    @media (max-width: 480px) {
+      #map { height: 260px; }
+    }
+
+    /* Mapbox attribution – behåll men minska */
+    .mapboxgl-ctrl-attrib {
+      font-size: 0.6rem !important;
+      opacity: 0.5;
+    }
+
     .foto-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -235,6 +258,8 @@ if (!tur) return Astro.redirect('/')
       </div>
     </div>
 
+    {hasMap && <div id="map"></div>}
+
     {tur.beskrivning && (
       <p class="beskrivning">{tur.beskrivning}</p>
     )}
@@ -247,5 +272,98 @@ if (!tur) return Astro.redirect('/')
       </div>
     )}
   </main>
+
+  {hasMap && (
+    <script
+      is:inline
+      src="https://api.mapbox.com/mapbox-gl-js/v3.3.0/mapbox-gl.js"
+    ></script>
+  )}
+
+  {hasMap && (
+    <script define:vars={{ lat: tur.lat, lng: tur.lng, mapboxToken }}>
+      mapboxgl.accessToken = mapboxToken
+
+      const map = new mapboxgl.Map({
+        container: 'map',
+        style: {
+          version: 8,
+          glyphs: 'mapbox://fonts/mapbox/{fontstack}/{range}',
+          sources: {
+            dem: {
+              type: 'raster-dem',
+              url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+              tileSize: 512
+            },
+            terrain: {
+              type: 'vector',
+              url: 'mapbox://mapbox.mapbox-terrain-v2'
+            }
+          },
+          layers: [
+            {
+              id: 'background',
+              type: 'background',
+              paint: { 'background-color': '#161616' }
+            },
+            {
+              id: 'hillshade',
+              type: 'hillshade',
+              source: 'dem',
+              paint: {
+                'hillshade-shadow-color': '#0d0d0d',
+                'hillshade-highlight-color': '#eafe53',
+                'hillshade-accent-color': '#eafe53',
+                'hillshade-exaggeration': 0.8
+              }
+            },
+            {
+              id: 'contours-minor',
+              type: 'line',
+              source: 'terrain',
+              'source-layer': 'contour',
+              filter: ['==', ['get', 'index'], -1],
+              paint: {
+                'line-color': '#eafe53',
+                'line-opacity': 0.2,
+                'line-width': 0.5
+              }
+            },
+            {
+              id: 'contours-major',
+              type: 'line',
+              source: 'terrain',
+              'source-layer': 'contour',
+              filter: ['>', ['get', 'index'], 0],
+              paint: {
+                'line-color': '#eafe53',
+                'line-opacity': 0.55,
+                'line-width': 1.2
+              }
+            }
+          ]
+        },
+        center: [lng, lat],
+        zoom: 13,
+        attributionControl: true,
+        interactive: true
+      })
+
+      // Lime-punkt som markör
+      const el = document.createElement('div')
+      el.style.cssText = [
+        'width:12px',
+        'height:12px',
+        'background:#eafe53',
+        'border-radius:50%',
+        'border:2px solid #161616',
+        'box-shadow:0 0 0 1.5px #eafe53'
+      ].join(';')
+
+      new mapboxgl.Marker({ element: el })
+        .setLngLat([lng, lat])
+        .addTo(map)
+    </script>
+  )}
 </body>
 </html>
