@@ -1,0 +1,365 @@
+---
+export const prerender = false
+
+import { createClient } from '@sanity/client'
+
+const FORM_PASSWORD = import.meta.env.FORM_PASSWORD
+const SANITY_WRITE_TOKEN = import.meta.env.SANITY_WRITE_TOKEN
+
+let loginError = ''
+let submitError = ''
+
+const isAuthenticated = Astro.cookies.get('reg_auth')?.value === FORM_PASSWORD
+
+if (Astro.request.method === 'POST') {
+  const data = await Astro.request.formData()
+  const action = data.get('_action') as string
+
+  if (action === 'login') {
+    const pwd = data.get('password') as string
+    if (pwd === FORM_PASSWORD) {
+      Astro.cookies.set('reg_auth', FORM_PASSWORD as string, {
+        httpOnly: true,
+        path: '/registrera',
+        maxAge: 60 * 60 * 24 * 7,
+        sameSite: 'strict'
+      })
+      return Astro.redirect('/registrera')
+    }
+    loginError = 'Fel kod.'
+  }
+
+  if (action === 'submit' && isAuthenticated) {
+    const getString = (k: string) => (data.get(k) as string)?.trim() || undefined
+    const getNum   = (k: string) => {
+      const v = data.get(k)
+      return v !== null && v !== '' ? Number(v) : undefined
+    }
+
+    const doc: Record<string, any> = {
+      _type:    'tur',
+      toppnamn: getString('toppnamn')!,
+      datum:    getString('datum')!,
+    }
+    const optional: Record<string, any> = {
+      hojd:         getNum('hojd'),
+      stigtid:      getNum('stigtid'),
+      snodjup:      getNum('snodjup'),
+      vindstyrka:   getNum('vindstyrka'),
+      vindriktning: getString('vindriktning'),
+      temperatur:   getNum('temperatur'),
+      lat:          getNum('lat'),
+      lng:          getNum('lng'),
+      beskrivning:  getString('beskrivning'),
+    }
+    for (const [k, v] of Object.entries(optional)) {
+      if (v !== undefined) doc[k] = v
+    }
+
+    try {
+      const sanity = createClient({
+        projectId: 'jkiqoxt9',
+        dataset:   'production',
+        useCdn:    false,
+        apiVersion: '2024-01-01',
+        token:     SANITY_WRITE_TOKEN,
+      })
+      const result = await sanity.create(doc)
+      return Astro.redirect(`/tur/${result._id}`)
+    } catch (_) {
+      submitError = 'Något gick fel. Försök igen.'
+    }
+  }
+}
+
+const today = new Date().toISOString().split('T')[0]
+---
+
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registrera tur – Splitboardcupen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --off-white: #F2EDD7;
+      --near-black: #1A2E6B;
+    }
+
+    body {
+      background: var(--off-white);
+      color: var(--near-black);
+      font-family: 'Albert Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    header {
+      border-bottom: 1px solid var(--near-black);
+      padding: clamp(1rem, 4vw, 2rem);
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+    }
+
+    header a.site-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    header a.site-title:hover { text-decoration: underline; }
+
+    header nav {
+      display: flex;
+      gap: 1rem;
+      align-items: baseline;
+    }
+
+    header nav a {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      text-decoration: none;
+      color: inherit;
+      opacity: 0.5;
+    }
+
+    header nav a:hover { opacity: 1; }
+
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: clamp(16px, 4vw, 48px);
+    }
+
+    .page-label {
+      display: inline-block;
+      background: var(--near-black);
+      color: var(--off-white);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.5rem;
+      margin-bottom: 2.5rem;
+      margin-top: 1.5rem;
+    }
+
+    /* ── Form layout ── */
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 480px) {
+      .grid-2 { grid-template-columns: 1fr; gap: 1.5rem; }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.5;
+    }
+
+    input,
+    select,
+    textarea {
+      appearance: none;
+      background: transparent;
+      border: 1px solid rgba(26,46,107,0.35);
+      color: var(--near-black);
+      font-family: 'Albert Sans', sans-serif;
+      font-size: 1rem;
+      padding: 0.65rem 0.75rem;
+      width: 100%;
+      outline: none;
+      border-radius: 0;
+      transition: border-color 0.1s;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--near-black);
+    }
+
+    textarea { resize: vertical; line-height: 1.6; }
+
+    select option { background: var(--off-white); }
+
+    .divider {
+      border: none;
+      border-top: 1px solid rgba(26,46,107,0.15);
+    }
+
+    .submit-btn {
+      align-self: flex-start;
+      background: var(--near-black);
+      color: var(--off-white);
+      border: none;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.85rem 2rem;
+      cursor: pointer;
+      transition: opacity 0.1s;
+    }
+
+    .submit-btn:hover { opacity: 0.8; }
+
+    .error {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      opacity: 0.7;
+    }
+
+    /* ── Login gate ── */
+
+    .login-wrap {
+      display: flex;
+      align-items: flex-start;
+      padding-top: 4rem;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      width: 280px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="site-title">Splitboardcupen</a>
+    <nav>
+      <a href="/logg">Säsongslogg</a>
+      <a href="/protokoll">Protokoll</a>
+    </nav>
+  </header>
+
+  <main>
+    {!isAuthenticated ? (
+      <div class="login-wrap">
+        <form method="POST" class="login-form">
+          <input type="hidden" name="_action" value="login" />
+          <div class="field">
+            <label>Kod</label>
+            <input type="password" name="password" autofocus required />
+          </div>
+          {loginError && <p class="error">{loginError}</p>}
+          <button type="submit" class="submit-btn">Fortsätt</button>
+        </form>
+      </div>
+    ) : (
+      <>
+        <div class="page-label">Registrera tur</div>
+
+        <form method="POST">
+          <input type="hidden" name="_action" value="submit" />
+
+          <div class="field">
+            <label>Toppnamn</label>
+            <input type="text" name="toppnamn" required />
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label>Datum</label>
+              <input type="date" name="datum" value={today} required />
+            </div>
+            <div class="field">
+              <label>Höjd (m)</label>
+              <input type="number" name="hojd" step="1" min="0" />
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label>Stigtid (min)</label>
+              <input type="number" name="stigtid" step="1" min="0" />
+            </div>
+            <div class="field">
+              <label>Snödjup (cm)</label>
+              <input type="number" name="snodjup" step="1" min="0" />
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label>Vindstyrka (m/s)</label>
+              <input type="number" name="vindstyrka" step="0.1" min="0" />
+            </div>
+            <div class="field">
+              <label>Vindriktning</label>
+              <select name="vindriktning">
+                <option value="">–</option>
+                {['N','NO','O','SO','S','SV','V','NV'].map(r => (
+                  <option value={r}>{r}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label>Temperatur (°C)</label>
+              <input type="number" name="temperatur" step="0.5" />
+            </div>
+            <div class="field"></div>
+          </div>
+
+          <hr class="divider" />
+
+          <div class="grid-2">
+            <div class="field">
+              <label>Latitud</label>
+              <input type="number" name="lat" step="any" placeholder="63.8258" />
+            </div>
+            <div class="field">
+              <label>Longitud</label>
+              <input type="number" name="lng" step="any" placeholder="20.2630" />
+            </div>
+          </div>
+
+          <hr class="divider" />
+
+          <div class="field">
+            <label>Beskrivning</label>
+            <textarea name="beskrivning" rows="6"></textarea>
+          </div>
+
+          {submitError && <p class="error">{submitError}</p>}
+
+          <button type="submit" class="submit-btn">Registrera tur</button>
+        </form>
+      </>
+    )}
+  </main>
+</body>
+</html>
