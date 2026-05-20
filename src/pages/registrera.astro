@@ -121,6 +121,11 @@ const today = new Date().toISOString().split('T')[0]
       display: flex;
       gap: 1rem;
       align-items: baseline;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 600px) {
+      header { flex-direction: column; gap: 0.5rem; }
     }
 
     header nav a {

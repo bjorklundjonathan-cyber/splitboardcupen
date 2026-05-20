@@ -62,6 +62,11 @@ const turer = await client.fetch(`*[_type == "tur"] | order(datum desc) {
       display: flex;
       gap: 1rem;
       align-items: baseline;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 600px) {
+      header { flex-direction: column; gap: 0.5rem; }
     }
 
     header nav a {

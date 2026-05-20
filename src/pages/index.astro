@@ -68,6 +68,11 @@ const medKoord = turer.filter((t: any) => t.lat && t.lng)
       display: flex;
       gap: 1rem;
       align-items: baseline;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 600px) {
+      header { flex-direction: column; gap: 0.5rem; }
     }
 
     header nav a {
