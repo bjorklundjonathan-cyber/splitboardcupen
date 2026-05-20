@@ -304,17 +304,17 @@ const hasMap = tur.lat && tur.lng
             {
               id: 'background',
               type: 'background',
-              paint: { 'background-color': '#161616' }
+              paint: { 'background-color': '#fdfbf4' }
             },
             {
               id: 'hillshade',
               type: 'hillshade',
               source: 'dem',
               paint: {
-                'hillshade-shadow-color': '#0d0d0d',
-                'hillshade-highlight-color': '#eafe53',
-                'hillshade-accent-color': '#eafe53',
-                'hillshade-exaggeration': 0.8
+                'hillshade-shadow-color': '#161616',
+                'hillshade-highlight-color': '#fdfbf4',
+                'hillshade-accent-color': '#4a4a3a',
+                'hillshade-exaggeration': 0.6
               }
             },
             {
@@ -324,8 +324,8 @@ const hasMap = tur.lat && tur.lng
               'source-layer': 'contour',
               filter: ['==', ['get', 'index'], -1],
               paint: {
-                'line-color': '#eafe53',
-                'line-opacity': 0.2,
+                'line-color': '#161616',
+                'line-opacity': 0.15,
                 'line-width': 0.5
               }
             },
@@ -336,9 +336,9 @@ const hasMap = tur.lat && tur.lng
               'source-layer': 'contour',
               filter: ['>', ['get', 'index'], 0],
               paint: {
-                'line-color': '#eafe53',
-                'line-opacity': 0.55,
-                'line-width': 1.2
+                'line-color': '#161616',
+                'line-opacity': 0.45,
+                'line-width': 1.1
               }
             }
           ]
