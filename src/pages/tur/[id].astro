@@ -48,7 +48,7 @@ const hasMap = tur.lat && tur.lng
     :root {
       --off-white: #F2EDD7;
       --near-black: #1A2E6B;
-      --lime: #eafe53;
+      --lime: #1A2E6B;
     }
 
     body {
@@ -356,10 +356,10 @@ const hasMap = tur.lat && tur.lng
       el.style.cssText = [
         'width:12px',
         'height:12px',
-        'background:#eafe53',
+        'background:#1A2E6B',
         'border-radius:50%',
-        'border:2px solid #1A2E6B',
-        'box-shadow:0 0 0 1.5px #eafe53'
+        'border:2px solid #F2EDD7',
+        'box-shadow:0 0 0 1.5px #1A2E6B'
       ].join(';')
 
       new mapboxgl.Marker({ element: el })
