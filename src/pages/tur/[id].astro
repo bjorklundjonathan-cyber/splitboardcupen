@@ -220,13 +220,13 @@ const hasMap = tur.lat && tur.lng
   <header>
     <a href="/" class="site-title">Splitboardcupen</a>
     <nav>
-      <a href="/">Säsongslogg</a>
+      <a href="/logg">Säsongslogg</a>
       <a href="/protokoll">Protokoll</a>
     </nav>
   </header>
 
   <main>
-    <a href="/" class="tilbaka">← Alla turer</a>
+    <a href="/logg" class="tilbaka">← Alla turer</a>
 
     <h1>{tur.toppnamn}</h1>
     <p class="datum">{new Date(tur.datum).toLocaleDateString('sv-SE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
