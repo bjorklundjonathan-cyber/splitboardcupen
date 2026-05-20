@@ -46,8 +46,8 @@ const hasMap = tur.lat && tur.lng
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --off-white: #fdfbf4;
-      --near-black: #161616;
+      --off-white: #F2EDD7;
+      --near-black: #1A2E6B;
       --lime: #eafe53;
     }
 
@@ -306,16 +306,16 @@ const hasMap = tur.lat && tur.lng
             {
               id: 'background',
               type: 'background',
-              paint: { 'background-color': '#fdfbf4' }
+              paint: { 'background-color': '#F2EDD7' }
             },
             {
               id: 'hillshade',
               type: 'hillshade',
               source: 'dem',
               paint: {
-                'hillshade-shadow-color': '#161616',
-                'hillshade-highlight-color': '#fdfbf4',
-                'hillshade-accent-color': '#4a4a3a',
+                'hillshade-shadow-color': '#1A2E6B',
+                'hillshade-highlight-color': '#F2EDD7',
+                'hillshade-accent-color': '#3a4e8b',
                 'hillshade-exaggeration': 0.6
               }
             },
@@ -326,7 +326,7 @@ const hasMap = tur.lat && tur.lng
               'source-layer': 'contour',
               filter: ['==', ['get', 'index'], -1],
               paint: {
-                'line-color': '#161616',
+                'line-color': '#1A2E6B',
                 'line-opacity': 0.15,
                 'line-width': 0.5
               }
@@ -338,7 +338,7 @@ const hasMap = tur.lat && tur.lng
               'source-layer': 'contour',
               filter: ['>', ['get', 'index'], 0],
               paint: {
-                'line-color': '#161616',
+                'line-color': '#1A2E6B',
                 'line-opacity': 0.45,
                 'line-width': 1.1
               }
@@ -358,7 +358,7 @@ const hasMap = tur.lat && tur.lng
         'height:12px',
         'background:#eafe53',
         'border-radius:50%',
-        'border:2px solid #161616',
+        'border:2px solid #1A2E6B',
         'box-shadow:0 0 0 1.5px #eafe53'
       ].join(';')
 
